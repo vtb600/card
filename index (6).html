@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tạo Card Visit VietinBank</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--text:#1d2b3a;--muted:#5d6b7a;--line:#d5dde8;--accent:#2a5c93;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a24;--surface:#1b2634;--text:#e6edf5;--muted:#9aa9ba;--line:#2e3d50;--accent:#6aa6e6}}
+:root[data-theme="dark"]{--bg:#121a24;--surface:#1b2634;--text:#e6edf5;--muted:#9aa9ba;--line:#2e3d50;--accent:#6aa6e6}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Be Vietnam Pro",system-ui,sans-serif;line-height:1.45}
+.wrap{max-width:1080px;margin:0 auto;padding:16px;display:grid;gap:16px}
+@media(min-width:860px){.wrap{grid-template-columns:340px 1fr;align-items:start}}
+h1{font-size:20px;margin:0 0 4px}
+h2{font-size:14px;margin:0 0 8px}
+p.sub{margin:0;color:var(--muted);font-size:13px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.panel+.panel{margin-top:0}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 3px}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;font-size:15px}
+.row{display:flex;gap:8px}.row>div{flex:1}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button{font:inherit;font-size:14px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);cursor:pointer}
+button.p{background:var(--accent);border-color:var(--accent);color:#fff}
+.out{width:100%;height:auto;border-radius:6px;border:1px solid var(--line);display:block}
+.hint{font-size:12px;color:var(--muted);margin-top:8px}
+.card-out{margin-bottom:18px}
+.card-out:last-child{margin-bottom:0}
+details{margin-top:12px;border-top:1px solid var(--line);padding-top:8px}
+summary{font-size:13px;color:var(--accent);cursor:pointer}
+.tag{display:inline-block;font-size:11px;color:var(--muted);font-weight:400}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="panel">
+<h1>Tạo card visit VietinBank</h1>
+<p class="sub">Chỉ cần nhập tiếng Việt, hệ thống tự dịch và xuất 2 thẻ: Tiếng Việt và Tiếng Anh.</p>
+<div class="sheet">
+<label>Chọn cán bộ từ Google Sheet</label>
+<select id="pick"><option value="">-- Chưa tải dữ liệu --</option></select>
+<p class="hint" id="sheetStatus"></p>
+<details id="sheetBox">
+<summary>Cấu hình link Google Sheet</summary>
+<label>Link Google Sheet (chia sẻ "Bất kỳ ai có đường liên kết" quyền Người xem, hoặc link Xuất bản lên web dạng CSV)</label>
+<input id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/.../edit?gid=0">
+<div class="btns"><button id="btnLoad" class="p">Lưu &amp; tải lại</button></div>
+</details>
+</div>
+<hr style="border:0;border-top:1px solid var(--line);margin:12px 0 0">
+<label>Họ và tên</label><input id="name" value="Trần Văn Thắng">
+<label>Chức danh</label><input id="title" value="Giám đốc PGD Hàm Tân">
+<label>Chi nhánh</label><input id="branch" value="Chi nhánh Bình Thuận">
+<label>Phòng / Đơn vị</label><input id="unit" value="Phòng giao dịch Hàm Tân">
+<label>Địa chỉ</label><input id="addr" value="153N Lê Lợi, phường Phước Hội, tỉnh Lâm Đồng">
+<div class="row"><div><label>Điện thoại bàn (P)</label><input id="phone" value="0252 3842 344"></div>
+<div><label>Di động (M)</label><input id="mobile" value="0945 929 492"></div></div>
+<label>Email (E)</label><input id="email" value="thangtv2@vietinbank.vn">
+<label>Website (chỉ dùng khi không có card.jpg)</label><input id="web" value="www.vietinbank.vn">
+
+<details id="enBox">
+<summary>Xem / sửa bản dịch tiếng Anh</summary>
+<p class="hint">Tự cập nhật khi bạn nhập tiếng Việt. Nếu sửa tay một ô, ô đó sẽ không bị ghi đè nữa.</p>
+<label>Name</label><input id="en_name">
+<label>Title</label><input id="en_title">
+<label>Branch</label><input id="en_branch">
+<label>Unit</label><input id="en_unit">
+<label>Address</label><input id="en_addr">
+<div class="btns"><button id="btnResetEn">Dịch lại tất cả</button></div>
+</details>
+
+<details id="adjBox">
+<summary>Chỉnh vị trí chữ trên mẫu</summary>
+<label>Dịch ngang</label><input type="range" id="xo" min="-300" max="300" value="0">
+<label>Dịch dọc</label><input type="range" id="yo" min="-300" max="300" value="0">
+<label>Cỡ chữ</label><input type="range" id="sz" min="60" max="140" value="100">
+<div class="btns"><button id="btnAdjReset">Đặt lại</button></div>
+</details>
+<p class="hint" id="tplStatus">Đang tải mẫu card.jpg…</p>
+</div>
+
+<div class="panel">
+<div class="card-out">
+<h2>Bản tiếng Việt</h2>
+<img id="out_vi" class="out" alt="Card visit tiếng Việt">
+<div class="btns"><button class="p" id="dl_vi">Tải ảnh tiếng Việt</button></div>
+</div>
+<div class="card-out">
+<h2>Bản tiếng Anh</h2>
+<img id="out_en" class="out" alt="Card visit tiếng Anh">
+<div class="btns"><button class="p" id="dl_en">Tải ảnh tiếng Anh</button></div>
+</div>
+<canvas id="cv" width="1100" height="680" hidden></canvas>
+</div>
+</div>
+
+<script>
+(function(){
+var TEMPLATE="card.jpg";
+var ids=["name","title","branch","unit","addr","phone","mobile","email","web"];
+var el={};ids.forEach(function(i){el[i]=document.getElementById(i)});
+var enKeys=["name","title","branch","unit","addr"];
+var en={};enKeys.forEach(function(k){en[k]=document.getElementById("en_"+k)});
+var cv=document.getElementById("cv"),ctx=cv.getContext("2d");
+var F='"Be Vietnam Pro",system-ui,sans-serif',BLUE="#005f96",RED="#d0334a";
+var bg=null;
+
+/* ---------- DỊCH VI -> EN ---------- */
+function strip(s){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D")}
+function cap(s){return s.replace(/\S+/g,function(w){return w.charAt(0).toUpperCase()+w.slice(1)})}
+var DEPT={
+"khách hàng cá nhân":"Retail Banking","khách hàng doanh nghiệp":"Corporate Banking",
+"khách hàng":"Customer","kế toán":"Accounting","tín dụng":"Credit",
+"tổ chức hành chính":"Administration","hành chính":"Administration",
+"kế hoạch tổng hợp":"Planning & General","quản lý rủi ro":"Risk Management",
+"thanh toán quốc tế":"International Settlement","ngân quỹ":"Treasury",
+"kiểm tra kiểm soát nội bộ":"Internal Control","công nghệ thông tin":"Information Technology",
+"nhân sự":"Human Resources","pháp chế":"Legal"
+};
+function unitEn(s){
+s=(s||"").trim();if(!s)return"";
+var m;
+if(m=s.match(/^(?:PGD|Phòng giao dịch)\s+(.+)$/i))return strip(m[1]).trim()+" Transaction Office";
+if(m=s.match(/^Chi nhánh\s+(.+)$/i))return strip(m[1]).trim()+" Branch";
+if(m=s.match(/^Phòng\s+(.+)$/i)){
+var k=m[1].trim().toLowerCase();
+return (DEPT[k]||strip(m[1]).trim())+" Department";}
+return strip(s);
+}
+var ROLES=[
+["Phó giám đốc","Deputy Director"],["Giám đốc","Director"],
+["Phó trưởng phòng","Deputy Head"],["Phó phòng","Deputy Head"],["Trưởng phòng","Head"],
+["Kế toán trưởng","Chief Accountant"],["Kiểm soát viên","Controller"],
+["Giao dịch viên","Teller"],["Chuyên viên","Officer"],["Trưởng nhóm","Team Leader"],
+["Cán bộ","Officer"],["Nhân viên","Staff"]
+];
+function titleEn(s){
+s=(s||"").trim();if(!s)return"";
+for(var i=0;i<ROLES.length;i++){
+var vi=ROLES[i][0],e=ROLES[i][1];
+if(s.toLowerCase().indexOf(vi.toLowerCase())===0){
+var rest=s.slice(vi.length).trim();
+if(!rest)return e;
+var u=unitEn(rest);
+if(/^Director$/.test(e)&&/Transaction Office$/.test(u))e="Manager";
+return e+" of "+u;}
+}
+return strip(s);
+}
+function addrEn(s){
+return (s||"").split(",").map(function(p){
+p=p.trim();var m;
+if(m=p.match(/^(?:phường|p\.)\s+(.+)$/i))return strip(m[1])+" Ward";
+if(m=p.match(/^(?:xã)\s+(.+)$/i))return strip(m[1])+" Commune";
+if(m=p.match(/^(?:thị trấn|tt\.)\s+(.+)$/i))return strip(m[1])+" Town";
+if(m=p.match(/^(?:quận|huyện)\s+(.+)$/i))return strip(m[1])+" District";
+if(m=p.match(/^(?:thành phố|tp\.?)\s+(.+)$/i))return strip(m[1])+" City";
+if(m=p.match(/^(?:tỉnh)\s+(.+)$/i))return strip(m[1])+" Province";
+if(m=p.match(/^(?:đường)\s+(.+)$/i))return strip(m[1])+" Street";
+return strip(p);
+}).filter(Boolean).join(", ");
+}
+var TR={name:function(v){return strip(v)},title:titleEn,branch:unitEn,unit:unitEn,addr:addrEn};
+function autoTranslate(force){
+enKeys.forEach(function(k){
+if(!force&&en[k].dataset.manual==="1")return;
+en[k].value=TR[k](el[k].value);
+if(force)en[k].dataset.manual="0";
+});
+}
+enKeys.forEach(function(k){en[k].addEventListener("input",function(){en[k].dataset.manual="1";render()})});
+
+/* ---------- VẼ CARD ---------- */
+function emblem(cx,cy,r){
+ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
+ctx.fillStyle="#aedff7";ctx.beginPath();ctx.ellipse(cx,cy+r*0.28,r*0.78,r*0.34,0,0,Math.PI);ctx.fill();
+ctx.fillStyle=RED;ctx.beginPath();ctx.ellipse(cx,cy+r*0.38,r*0.72,r*0.3,0,0,Math.PI);ctx.fill();
+}
+function drawCard(v){
+var x=100,W,H;
+if(bg){cv.width=W=bg.naturalWidth;cv.height=H=bg.naturalHeight;ctx.drawImage(bg,0,0)}
+else{cv.width=W=1100;cv.height=H=680}
+if(!bg){
+ctx.fillStyle="#aedff7";ctx.fillRect(0,0,W,H);
+var g=ctx.createLinearGradient(0,0,W,0);
+g.addColorStop(0,"#4aa9df");g.addColorStop(.4,"#2f5f98");g.addColorStop(.7,"#8a4a6a");g.addColorStop(1,"#d23c48");
+ctx.fillStyle=g;ctx.fillRect(0,H-62,W,62);
+ctx.textBaseline="alphabetic";ctx.fillStyle=BLUE;ctx.font="600 58px "+F;
+ctx.fillText("VietinBank",590,170);emblem(990,100,52);
+}
+var k=W/1100,s=+document.getElementById("sz").value/100;
+ctx.save();ctx.scale(k,k);
+ctx.translate(+document.getElementById("xo").value,+document.getElementById("yo").value);
+ctx.translate(100,240);ctx.scale(s,s);ctx.translate(-100,-240);
+ctx.textBaseline="alphabetic";ctx.fillStyle=BLUE;
+ctx.font="600 44px "+F;ctx.fillText(v.name,x,262);
+ctx.font="400 30px "+F;ctx.fillText(v.title,x,312);
+ctx.font="600 25px "+F;
+ctx.fillText(v.branch,x,415);
+var w=ctx.measureText(v.branch).width;
+if(v.unit)ctx.fillText("|  "+v.unit,x+w+14,415);
+ctx.font="400 25px "+F;ctx.fillText(v.addr,x,455);
+ctx.font="400 27px "+F;
+ctx.fillStyle=RED;ctx.fillText("P",x,510);ctx.fillText("M",x+300,510);ctx.fillText("E",x,552);
+ctx.fillStyle=BLUE;ctx.fillText(v.phone,x+42,510);ctx.fillText(v.mobile,x+342,510);ctx.fillText(v.email,x+42,552);
+if(!bg){ctx.font="600 24px "+F;ctx.fillText(v.web,x,596)}
+ctx.restore();
+return cv.toDataURL("image/png");
+}
+var outs={vi:document.getElementById("out_vi"),en:document.getElementById("out_en")};
+function common(){return{phone:el.phone.value,mobile:el.mobile.value,email:el.email.value,web:el.web.value}}
+function vals(lang){
+var c=common(),o={};
+for(var k in c)o[k]=c[k];
+enKeys.forEach(function(key){o[key]=(lang==="vi"?el[key]:en[key]).value});
+return o;
+}
+function render(){
+try{
+outs.vi.src=drawCard(vals("vi"));
+outs.en.src=drawCard(vals("en"));
+}catch(e){
+document.getElementById("tplStatus").textContent="Không xuất được ảnh (trình duyệt chặn canvas khi mở file trực tiếp). Hãy mở qua GitHub Pages hoặc máy chủ web.";
+}
+}
+
+/* ---------- SỰ KIỆN ---------- */
+ids.forEach(function(i){el[i].addEventListener("input",function(){
+if(enKeys.indexOf(i)>-1){en[i].dataset.manual!=="1"&&(en[i].value=TR[i](el[i].value))}
+render();
+})});
+document.getElementById("btnResetEn").onclick=function(){autoTranslate(true);render()};
+["xo","yo","sz"].forEach(function(i){document.getElementById(i).addEventListener("input",render)});
+document.getElementById("btnAdjReset").onclick=function(){
+document.getElementById("xo").value=0;document.getElementById("yo").value=0;document.getElementById("sz").value=100;render()};
+function download(lang){
+var a=document.createElement("a");
+a.href=outs[lang].src;
+var n=strip(el.name.value).replace(/\s+/g,"_")||"card";
+a.download="card_"+n+"_"+lang+".png";
+document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+document.getElementById("dl_vi").onclick=function(){download("vi")};
+document.getElementById("dl_en").onclick=function(){download("en")};
+
+/* ---------- GOOGLE SHEET ---------- */
+var SHEET_URL=""; /* có thể dán link Google Sheet vào đây để mặc định */
+var COLS={"ho ten":"name","chuc danh":"title","phong":"unit","dia chi phong":"addr","dien thoai ban":"phone","dien thoai di dong":"mobile","email":"email","chuc danh tieng anh":"enTitle","phong tieng anh":"enUnit"};
+var rowsData=[];
+var pick=document.getElementById("pick"),sUrl=document.getElementById("sheetUrl"),sStat=document.getElementById("sheetStatus");
+function parseCSV(t){var rows=[],row=[],f="",q=false;
+for(var i=0;i<t.length;i++){var c=t[i];
+if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+else if(c==='"')q=true;
+else if(c===","){row.push(f);f=""}
+else if(c==="\n"||c==="\r"){if(c==="\r"&&t[i+1]==="\n")i++;row.push(f);rows.push(row);row=[];f=""}
+else f+=c}
+if(f!==""||row.length){row.push(f);rows.push(row)}
+return rows}
+function csvUrl(u){u=(u||"").trim();if(!u)return"";
+if(/output=csv|tqx=out:csv/.test(u))return u;
+var m=u.match(/\/d\/([a-zA-Z0-9_-]+)/);if(!m)return"";
+var g=u.match(/[#&?]gid=(\d+)/);
+return "https://docs.google.com/spreadsheets/d/"+m[1]+"/gviz/tq?tqx=out:csv"+(g?"&gid="+g[1]:"")}
+function fixPhone(v){v=(v||"").trim();return /^\d{9,10}$/.test(v)&&v.charAt(0)!=="0"?"0"+v:v}
+function setVal(id,v){el[id].value=(v||"").trim()}
+function applyRow(r){
+setVal("name",r.name);setVal("title",r.title);setVal("unit",r.unit);setVal("addr",r.addr);
+el.phone.value=fixPhone(r.phone);el.mobile.value=fixPhone(r.mobile);setVal("email",r.email);
+autoTranslate(true);
+if(r.enTitle&&r.enTitle.trim()){en.title.value=r.enTitle.trim();en.title.dataset.manual="1"}
+if(r.enUnit&&r.enUnit.trim()){en.unit.value=r.enUnit.trim();en.unit.dataset.manual="1"}
+render()}
+function loadSheet(){
+var url=csvUrl(sUrl.value);
+if(!url){sStat.textContent="Chưa có link Google Sheet. Mở \"Cấu hình link Google Sheet\" để dán link.";return}
+sStat.textContent="Đang tải dữ liệu…";
+fetch(url).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text()}).then(function(t){
+if(/^\s*</.test(t))throw new Error("Sheet chưa được chia sẻ công khai");
+var rows=parseCSV(t);if(rows.length<2)throw new Error("Sheet chưa có dữ liệu");
+var map=rows[0].map(function(h){return COLS[strip(h).toLowerCase().replace(/\s+/g," ").trim()]||null});
+rowsData=rows.slice(1).map(function(r){var o={};map.forEach(function(k,i){if(k)o[k]=r[i]||""});return o}).filter(function(o){return o.name&&o.name.trim()}).reverse();
+pick.innerHTML='<option value="">-- Chọn cán bộ ('+rowsData.length+') --</option>';
+rowsData.forEach(function(o,i){var op=document.createElement("option");op.value=i;op.textContent=o.name+(o.unit?" — "+o.unit:"");pick.appendChild(op)});
+sStat.textContent="Đã tải "+rowsData.length+" cán bộ."}).catch(function(e){
+sStat.textContent="Không tải được: "+e.message+". Kiểm tra lại quyền chia sẻ của Google Sheet."})}
+pick.addEventListener("change",function(){if(pick.value!=="")applyRow(rowsData[+pick.value])});
+document.getElementById("btnLoad").onclick=function(){try{localStorage.setItem("card_sheet_url",sUrl.value.trim())}catch(e){}loadSheet()};
+(function(){var saved="";try{saved=localStorage.getItem("card_sheet_url")||""}catch(e){}
+sUrl.value=saved||SHEET_URL;loadSheet()})();
+
+/* ---------- KHỞI TẠO ---------- */
+autoTranslate(true);
+render();
+var im=new Image();
+im.onload=function(){bg=im;document.getElementById("tplStatus").textContent="Đang dùng mẫu "+TEMPLATE+" ("+im.naturalWidth+"×"+im.naturalHeight+").";render()};
+im.onerror=function(){document.getElementById("tplStatus").textContent="Không tìm thấy "+TEMPLATE+" cùng thư mục với index.html, đang dùng mẫu vẽ tạm.";};
+im.src=TEMPLATE;
+if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load("400 20px 'Be Vietnam Pro'"),document.fonts.load("600 20px 'Be Vietnam Pro'")]).then(render).catch(function(){})}
+})();
+</script>
+</body>
+</html>
